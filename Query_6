@@ -1,0 +1,17 @@
+WITH cte_top_5_customers (country_id,customer_id,last_name) AS (SELECT CO.country,
+CO.country_id,
+CU.customer_id,
+CU.last_name,
+P.amount
+FROM customer CU
+INNER JOIN rental R ON CU.customer_id = R.customer_id
+INNER JOIN payment P ON R.rental_id = P.rental_id
+INNER JOIN address AD ON CU.address_id = AD.address_id
+INNER JOIN city CI ON AD.city_id = CI.city_id
+INNER JOIN country CO ON CI.country_ID = CO.country_ID
+WHERE country IN ('India','China','United States','Japan', 'Mexico', 'Brazil', 'Russian Federation', 'Philippines', 'Turkey','Indonesia')GROUP BY CU.customer_id,P.amount,CI.city,CO.country,CO.country_id
+ORDER BY amount DESC
+LIMIT 5
+)
+SELECT AVG (amount) AS average
+FROM cte_top_5_customers
