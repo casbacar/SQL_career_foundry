@@ -1,0 +1,23 @@
+SELECT D.country,
+COUNT(DISTINCT A.customer_id) AS all_customer_count,
+COUNT(DISTINCT top_5_customers.customer_id) AS top_customer_count
+FROM customer A
+LEFT JOIN address B ON A.address_id = B.address_id
+LEFT JOIN city C ON B.city_id = C.city_id
+LEFT JOIN country D ON C.country_ID = D.country_ID
+JOIN
+(SELECT CO.country,
+CO.country_id,
+CU.customer_id,
+CU.last_name
+FROM customer CU
+INNER JOIN rental R ON CU.customer_id = R.customer_id
+INNER JOIN payment P ON R.rental_id = P.rental_id
+INNER JOIN address AD ON CU.address_id = AD.address_id
+INNER JOIN city CI ON AD.city_id = CI.city_id
+INNER JOIN country CO ON CI.country_ID = CO.country_ID
+WHERE country IN ('India','China','United States','Japan', 'Mexico', 'Brazil', 'Russian Federation', 'Philippines', 'Turkey','Indonesia')
+GROUP BY CO.country, CO.country_id,CU.customer_id
+LIMIT 5) AS top_5_customers
+ON D.country_id = top_5_customers.country_id
+GROUP BY D.country GROUP BY D.country
